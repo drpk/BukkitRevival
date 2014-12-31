@@ -137,5 +137,26 @@ public class PigPoop extends JavaPlugin implements Listener, CommandExecutor {
         }
     }
 
+@EventHandler
+	public void onFeed(PlayerInteractEntityEvent evt){
+		if (!(evt.getRightClicked().getType() == EntityType.COW))
+			return;
 
+		Cow cow = (Cow) evt.getRightClicked();
+
+		if (evt.getPlayer().getInventory().getItemInHand() == null)
+			return;
+
+		if (evt.getPlayer().getInventory().getItemInHand() != new ItemStack(
+				Material.RED_MUSHROOM))
+			return;
+
+		evt.getRightClicked().getLocation().getWorld().spawnEntity(evt
+				.getRightClicked().getLocation(), EntityType.MUSHROOM_COW);
+		evt.getPlayer().getInventory().removeItem(new ItemStack(
+				Material.RED_MUSHROOM, 1));
+		cow.setHealth(0);
+	}
 }
+
+
