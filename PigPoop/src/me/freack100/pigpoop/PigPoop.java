@@ -11,6 +11,7 @@ import org.bukkit.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class PigPoop extends JavaPlugin implements Listener, CommandExecutor {
 
@@ -41,7 +43,7 @@ public class PigPoop extends JavaPlugin implements Listener, CommandExecutor {
         config = this.getConfig();
 
         //Setting the defaults
-        config.addDefault("drop.id", 1);
+        config.addDefault("drop.id", Material.STONE.name());
         config.addDefault("drop.amount", 1);
         config.addDefault("drop.damage", (short) 0);
         config.addDefault("drop.data", (byte) 0);
@@ -58,12 +60,19 @@ public class PigPoop extends JavaPlugin implements Listener, CommandExecutor {
         saveConfig();
 
         //Getting the config values
-        int id = config.getInt("drop.id");
+        Material id = Material.getMaterial(config.getString("drop.id").toUpperCase().replace(" ", "_"));
         int amount = config.getInt("drop.amount");
         short damage = (short) config.getInt("drop.damage");
         byte data = (byte) config.getInt("drop.data");
-
-        drop = new ItemStack(id, amount, damage, data);
+        try {
+            drop = new ItemStack(id, amount, damage, data);
+        } catch(Exception e){
+            //Something went wrong when creating the itemstack :O
+            getLogger().log(Level.SEVERE,"Could not load plugin because of malfunctioning drop, please fix that ASAP. (It might be the 'id' field, be sure that it's a correct item name!)");
+            getLogger().log(Level.SEVERE,"Disabling...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
         usePermissions = config.getBoolean("usePermissions");
         disabled = config.getStringList("disabledAnimals");
         cooldown = config.getInt("cooldown");
