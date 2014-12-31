@@ -19,9 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-/**
- * Created by Freack100.
- */
 public class PigPoop extends JavaPlugin implements Listener, CommandExecutor {
 
     private HashMap<Entity, Integer> cooldownList = new HashMap();
